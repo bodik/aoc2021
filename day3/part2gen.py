@@ -13,22 +13,22 @@ from bitarray import bitarray
 from bitarray.util import ba2int
 
 
-def criteria(data, idx):
+def criteria(data, idx, critfn):
     """filter data items with most common value in idx bit"""
 
-    # find most common value
+    # count stats
     tmp = defaultdict(int)
     for line in data:
         tmp[line[idx]] += 1
 
-    # sort by key names to honor '1' in ties, required py37+
-    tmp = {k: v for k, v in sorted(tmp.items(), key=lambda item: item[0], reverse=True)}
-
     # select most common value
-    tmp = max(tmp, key=tmp.get)
+    # inspired by https://github.com/hyper-neutrino/advent-of-code/blob/main/2021/day3p2.py
+    # where critfn over tuple also solves the item preference issue as sideeffect (min vs max vs '0' vs '1')
+    # as max([(1, '0'), (1, '1')]) == (1, '1')
+    tmp = critfn([(count, item) for item, count in tmp.items()])
 
     # filter items
-    return [line for line in data if line[idx] == tmp]
+    return [line for line in data if line[idx] == tmp[1]]
 
 
 def main():
@@ -43,14 +43,13 @@ def main():
 
     ox_data = data
     for idx in range(len(data[0])):
-        ox_data = criteria(ox_data, idx)
+        ox_data = criteria(ox_data, idx, max)
         if len(ox_data) == 1:
             break
 
     co_data = data
     for idx in range(len(data[0])):
-        tmp = criteria(co_data, idx)
-        co_data = [item for item in co_data if item not in tmp]
+        co_data = criteria(co_data, idx, min)
         if len(co_data) == 1:
             break
 
