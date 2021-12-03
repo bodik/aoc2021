@@ -6,20 +6,16 @@ lets prepare for sprint
 
 import logging
 from argparse import ArgumentParser
-from collections import defaultdict
+from collections import Counter
 from pathlib import Path
-
-from bitarray import bitarray
-from bitarray.util import ba2int
 
 
 def criteria(data, idx, critfn):
     """filter data items with most common value in idx bit"""
 
-    # count stats
-    tmp = defaultdict(int)
-    for line in data:
-        tmp[line[idx]] += 1
+    # count stats via counter
+    # https://github.com/connorjayr/AdventOfCode/blob/master/solvers/year2021/day03/solver.py
+    tmp = Counter([line[idx] for line in data])
 
     # select most common value
     # inspired by https://github.com/hyper-neutrino/advent-of-code/blob/main/2021/day3p2.py
@@ -53,8 +49,8 @@ def main():
         if len(co_data) == 1:
             break
 
-    ox_rating = ba2int(bitarray(ox_data[0]))
-    co_rating = ba2int(bitarray(co_data[0]))
+    ox_rating = int(ox_data[0], 2)
+    co_rating = int(co_data[0], 2)
 
     print(f'ox {ox_rating} co {co_rating} life {ox_rating*co_rating}')
 
