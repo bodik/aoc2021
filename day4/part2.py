@@ -5,7 +5,6 @@ aoc2021 solution skeleton
 
 import logging
 from argparse import ArgumentParser
-from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
@@ -104,10 +103,7 @@ def main():
     for draw in draw_buf:
         boards, winners = check_boards(boards, draw)
         for winner in winners:
-            # board might have change until last draw is processed
-            # keep state to preserve it's score
-            # it does not happen in current input but it might
-            last_winner = deepcopy(winner)
+            last_winner = winner
             last_draw = draw
             boards.remove(winner)
 
