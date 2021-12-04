@@ -46,7 +46,7 @@ class Board:
 
         counter = 0
         for row in self.data:
-            counter += sum(map(int, filter(lambda x: x != -1, row)))
+            counter += sum(filter(lambda x: x != -1, row))
         return counter * val
 
 
