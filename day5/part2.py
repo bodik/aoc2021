@@ -44,11 +44,11 @@ def main():
         start = tuple(map(int, start.split(',')))
         end = tuple(map(int, end.split(',')))
 
-        if not (
-            is_horizontal(start, end)
-            or is_vertical(start, end)
-            or is_diagonal(start, end)
-        ):
+        if not any([
+            is_horizontal(start, end),
+            is_vertical(start, end),
+            is_diagonal(start, end)
+        ]):
             continue
 
         for point in bresenham(*start, *end):
