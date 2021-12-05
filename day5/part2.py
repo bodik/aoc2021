@@ -12,15 +12,15 @@ from bresenham import bresenham
 
 
 def is_horizontal(start, end):
-    """x is horizonal"""
+    """x is horizonal; so y does not change"""
 
-    return start[0] == end[0]
+    return start[1] == end[1]
 
 
 def is_vertical(start, end):
-    """y is horizonal"""
+    """y is vertical; so x does not change"""
 
-    return start[1] == end[1]
+    return start[0] == end[0]
 
 
 def is_diagonal(start, end):
