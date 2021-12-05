@@ -24,7 +24,7 @@ def is_vertical(start, end):
 
 
 def is_diagonal(start, end):
-    """x and y distance should be equal"""
+    """distance on axes should be equal"""
 
     return (abs(start[0] - end[0]) == abs(start[1] - end[1]))
 
