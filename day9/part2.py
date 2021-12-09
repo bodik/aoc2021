@@ -41,8 +41,8 @@ def get_sinks(data):
 
 
 def get_basin(data, sink):
-
     basin = [sink]
+
     search = [sink]
     while True:
         if not search:
