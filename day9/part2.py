@@ -40,24 +40,20 @@ def get_sinks(data):
     return sinks
 
 
-def get_basins(data, sinks):
-    basins = []
+def get_basin(data, sink):
 
-    for sink in sinks:
-        basin = [sink]
-        search = [sink]
-        while True:
-            if not search:
-                break
-            cur = search.pop()
-            for adj in get_adjacent_points(cur, data.shape):
-                if (data[adj] != 9) and (data[adj] > data[cur]):
-                    search.append(adj)
-                    basin.append(adj)
+    basin = [sink]
+    search = [sink]
+    while True:
+        if not search:
+            break
+        cur = search.pop()
+        for adj in get_adjacent_points(cur, data.shape):
+            if (data[adj] != 9) and (data[adj] > data[cur]):
+                search.append(adj)
+                basin.append(adj)
 
-        basins.append(list(set(basin)))
-
-    return basins
+    return list(set(basin))
 
 
 def main():
@@ -72,7 +68,7 @@ def main():
     data = np.array(list(map(list, data)), dtype=int)
 
     sinks = get_sinks(data)
-    basins = get_basins(data, sinks)
+    basins = [get_basin(data, sink) for sink in sinks]
 
     basin_sizes = [len(x) for x in basins]
     result = reduce(lambda a, b: a*b, sorted(basin_sizes, reverse=True)[:3])
