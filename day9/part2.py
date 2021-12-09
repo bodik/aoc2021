@@ -42,17 +42,16 @@ def get_sinks(data):
 
 def get_basin(data, sink):
     basin = [sink]
+
     search = [sink]
-    while True:
-        if not search:
-            break
+    while search:
         cur = search.pop()
         for adj in get_adjacent_points(cur, data.shape):
             if (adj not in basin) and (data[adj] != 9) and (data[adj] > data[cur]):
                 search.append(adj)
                 basin.append(adj)
 
-    return list(set(basin))
+    return basin
 
 
 def main():
