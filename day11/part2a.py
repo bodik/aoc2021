@@ -42,7 +42,7 @@ def main():
     while True:
         step += 1
 
-        queue = []
+        queue = set()
         flashes = 0
 
         for row in range(rows):
@@ -50,12 +50,10 @@ def main():
                 octo = (row, col)
                 data[octo] += 1
                 if data[octo] > 9:
-                    queue.append(octo)
+                    queue.add(octo)
 
         while queue:
             octo = queue.pop()
-            if data[octo] == 0:
-                continue
 
             data[octo] = 0
             flashes += 1
@@ -64,7 +62,7 @@ def main():
                 if data[adj] != 0:
                     data[adj] += 1
                 if data[adj] > 9:
-                    queue.append(adj)
+                    queue.add(adj)
 
         if flashes == (rows * cols):
             break
