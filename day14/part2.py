@@ -51,7 +51,7 @@ def main():
                 new_counter[pair] -= counter[pair]
                 new_counter[f'{pair[0]}{rules[pair]}'] += counter[pair]
                 new_counter[f'{rules[pair]}{pair[1]}'] += counter[pair]
-        counter = defaultdict(int, {k: v for k, v in new_counter.items() if v > 0})
+        counter = new_counter
 
     length = sum(counter.values())+1
     print(f'length {length}')
