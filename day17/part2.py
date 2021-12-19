@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """
 aoc2021 solution skeleton
+
+
+https://sciencing.com/calculate-bullet-trajectory-5185428.html
+
+https://en.wikipedia.org/wiki/Projectile_motion#Relation_between_horizontal_range_and_maximum_height
 """
 
 import logging
