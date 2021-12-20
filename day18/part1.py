@@ -132,9 +132,8 @@ def add(x, y):
 
 
 def magnitude(data):
-
-    if (data.left.value is not None) and (data.right.value is not None):
-        return data.left.value*3 + data.right.value*2
+    if data.value is not None:
+        return data.value
     return magnitude(data.left)*3 + magnitude(data.right)*2
 
 def main():
