@@ -52,19 +52,43 @@ class Node:
             count += 1
         return count
 
-    def pred(self):
-        alist = list(self.top.iter())
-        index = alist.index(self)
-        if index > 0:
-            return alist[index-1]
+    def first_down_left(self):
+        tmp = self
+        while tmp.left:
+            tmp = tmp.left
+        return tmp
+
+    def first_down_right(self):
+        tmp = self
+        while tmp.right:
+            tmp = tmp.right
+        return tmp
+
+    def first_up_left(self):
+        tmp = self.root
+        ignore = self
+        while tmp and (tmp.left is not None):
+            if tmp.left != ignore:
+                return tmp.left.first_down_right()
+            ignore = tmp
+            tmp = tmp.root
         return None
 
-    def succ(self):
-        alist = list(self.top.iter())
-        index = alist.index(self)
-        if index < len(alist)-1:
-            return alist[index+1]
+    def first_up_right(self):
+        tmp = self.root
+        ignore = self
+        while tmp and (tmp.right is not None):
+            if tmp.right != ignore:
+                return tmp.right.first_down_left()
+            ignore = tmp
+            tmp = tmp.root
         return None
+
+    def pred(self):
+        return self.first_up_left()
+
+    def succ(self):
+        return self.first_up_right()
 
 
 def parse(value, root=None):
