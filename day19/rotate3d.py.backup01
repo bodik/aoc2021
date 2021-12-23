@@ -1,0 +1,65 @@
+"""
+https://www.meccanismocomplesso.org/en/3d-rotations-and-euler-angles-in-python/
+"""
+
+import math as m
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
+#from rotate_2d_point import rotate_origin_only
+
+def Rx(theta):
+    return np.matrix([
+        [ 1, 0           , 0           ],
+        [ 0, m.cos(theta),-m.sin(theta)],
+        [ 0, m.sin(theta), m.cos(theta)]
+    ])
+  
+def Ry(theta):
+    return np.matrix([
+        [ m.cos(theta), 0, m.sin(theta)],
+        [ 0           , 1, 0           ],
+        [-m.sin(theta), 0, m.cos(theta)]
+    ])
+  
+def Rz(theta):
+    return np.matrix([
+        [ m.cos(theta), -m.sin(theta), 0 ],
+        [ m.sin(theta), m.cos(theta) , 0 ],
+        [ 0           , 0            , 1 ]
+    ])
+
+dim = 3
+n=20
+particles=np.zeros(n,dtype=[("position", float , dim)])
+particles["position"]=np.random.uniform(0,1000,(n,dim));
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d', xlim=(-1000, 1000), ylim=(-1000, 1000), zlim=(-1000, 1000))
+scatter=ax.scatter(particles["position"][:,0], particles["position"][:,1], particles["position"][:,2])
+#scatter=ax.scatter([1], [1], [2])
+
+
+phi = 0.01 #m.pi/2
+theta = 0.01 #m.pi/4
+psi = 0.05
+print("phi =", phi)
+print("theta  =", theta)
+print("psi =", psi)
+
+R = Rz(psi) * Ry(theta) * Rx(phi)
+print(np.round(R, decimals=2))
+
+def update(frame_number):
+    for idx, point in enumerate(particles["position"]):
+        v1 = np.array([[particles["position"][idx][0]], [particles["position"][idx][1]], [particles["position"][idx][2]]])
+        v2 = R * v1
+        particles["position"][idx] = np.round(v2, decimals=2)[:,0]
+
+    scatter.set_offsets(particles["position"])
+    scatter.set_3d_properties(particles["position"][:,2], zdir='z')
+    return scatter,
+
+anim = FuncAnimation(fig, update, 100, interval=10, blit=False, repeat=True)
+plt.show()
