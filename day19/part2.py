@@ -1,4 +1,7 @@
 """
+TODO: rotation matrixes are probably in somewhat wrong order given the axis ordering X, Y, Z
+
+
 https://www.tutorialspoint.com/how-to-animate-a-scatter-plot-in-matplotlib
 https://gist.githubusercontent.com/LyleScott/e36e08bfb23b1f87af68c9051f985302
 https://www.meccanismocomplesso.org/en/3d-rotations-and-euler-angles-in-python/
