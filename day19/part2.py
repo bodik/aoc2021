@@ -1,16 +1,27 @@
 """
-TODO: rotation matrixes are probably in somewhat wrong order given the axis ordering X, Y, Z
-
-
 https://www.tutorialspoint.com/how-to-animate-a-scatter-plot-in-matplotlib
 https://gist.githubusercontent.com/LyleScott/e36e08bfb23b1f87af68c9051f985302
-https://www.meccanismocomplesso.org/en/3d-rotations-and-euler-angles-in-python/
 https://stackoverflow.com/questions/38118598/3d-animation-using-matplotlib
 https://matplotlib.org/stable/gallery/animation/simple_anim.html
 
+https://www.meccanismocomplesso.org/en/3d-rotations-and-euler-angles-in-python/
+https://en.wikipedia.org/wiki/Rotation_formalisms_in_three_dimensions
+
+mathematical convention based on right-handed coordinates
+
+     z|
+      |
+    __|/_____
+      /     y
+    x/
+
+enumerate 24 rotation matrixes for cube based on air-plane rotation analogy
 https://www.euclideanspace.com/maths/algebra/matrix/transforms/examples/index.htm
 
-https://www.brainm.com/software/pubs/math/Rotation_matrix.pdf
+ROTATIONS = [
+    [heading Z, attitude X, bank Y], ..., ...
+    ...
+]
 """
 
 import math as m
@@ -22,8 +33,6 @@ from pathlib import Path
 import numpy as np
 
 
-# consider plane rotation
-# https://www.euclideanspace.com/maths/algebra/matrix/transforms/examples/index.htm
 ROTATIONS = [
     (0, 0, 0),  (90, 0, 0), (180, 0, 0), (270, 0, 0),
     (0, 90, 0), (90, 90, 0), (180, 90, 0), (270, 90, 0),
@@ -78,7 +87,8 @@ def parse_input(inputfile):
 
 
 def rotate(beacons, angles):
-    phi, theta, psi = map(m.radians, angles)
+    # unpack plane-orientation based rotation matrixes into proper euler angles
+    psi, phi, theta = map(m.radians, angles)
     rotation_matrix = Rz(psi) * Ry(theta) * Rx(phi)
     tmp = deepcopy(beacons)
     for idx, point in enumerate(tmp):
