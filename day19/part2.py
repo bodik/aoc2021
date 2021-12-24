@@ -6,20 +6,17 @@ https://stackoverflow.com/questions/38118598/3d-animation-using-matplotlib
 https://matplotlib.org/stable/gallery/animation/simple_anim.html
 
 https://www.euclideanspace.com/maths/algebra/matrix/transforms/examples/index.htm
+
+https://www.brainm.com/software/pubs/math/Rotation_matrix.pdf
 """
 
 import math as m
 from argparse import ArgumentParser
 from itertools import permutations
 from copy import deepcopy
-from itertools import cycle
 from pathlib import Path
-from time import sleep
 
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.animation import FuncAnimation
-from mpl_toolkits.mplot3d import Axes3D
 
 
 # consider plane rotation
@@ -33,39 +30,29 @@ ROTATIONS = [
     (0, 0, 270), (90, 0, 270), (180, 0, 270), (270, 0, 270)
 ]
 
-ROTATIONS_CYCLE = cycle(ROTATIONS)
 
-#SPACE = (-3, 3)
-SPACE = (-1200, 1200)
-
-
-def Rx(theta):
+def Rx(theta):  # pylint: disable=invalid-name
     return np.matrix([
-        [ 1, 0           , 0           ],
-        [ 0, m.cos(theta),-m.sin(theta)],
-        [ 0, m.sin(theta), m.cos(theta)]
+        [1, 0, 0],
+        [0, m.cos(theta), -m.sin(theta)],
+        [0, m.sin(theta), m.cos(theta)]
     ])
-  
-def Ry(theta):
+
+
+def Ry(theta):  # pylint: disable=invalid-name
     return np.matrix([
-        [ m.cos(theta), 0, m.sin(theta)],
-        [ 0           , 1, 0           ],
+        [m.cos(theta), 0, m.sin(theta)],
+        [0, 1, 0],
         [-m.sin(theta), 0, m.cos(theta)]
     ])
-  
-def Rz(theta):
+
+
+def Rz(theta):  # pylint: disable=invalid-name
     return np.matrix([
-        [ m.cos(theta), -m.sin(theta), 0 ],
-        [ m.sin(theta), m.cos(theta) , 0 ],
-        [ 0           , 0            , 1 ]
+        [m.cos(theta), -m.sin(theta), 0],
+        [m.sin(theta), m.cos(theta), 0],
+        [0, 0, 1]
     ])
-
-
-def rotation_matrix(phi=0.1, theta=0, psi=0):
-    """
-    angle should be ? [0, 2*m.pi] rad
-    """
-    return Rx(phi) * Ry(theta) * Rz(psi)
 
 
 def parse_input(inputfile):
@@ -88,21 +75,21 @@ def parse_input(inputfile):
 
 
 def rotate(beacons, angles):
-    rotx, roty, rotz = angles
-    R = rotation_matrix(m.radians(rotx), m.radians(roty), m.radians(rotz))
+    phi, theta, psi = map(m.radians, angles)
+    rotation_matrix = Rz(psi) * Ry(theta) * Rx(phi)
     tmp = deepcopy(beacons)
     for idx, point in enumerate(tmp):
-        v1 = np.array([point]).T
-        v2 = R * v1
-        #tmp[idx] = v2.T
-        tmp[idx] = np.round(v2, decimals=1)[:,0]
+        vec1 = np.array([point]).T
+        vec2 = rotation_matrix * vec1
+        # tmp[idx] = vec2.T
+        tmp[idx] = np.round(vec2, decimals=1)[:, 0]
 
     return tmp
 
 
 def check_alignment(base, beacons):
     """
-    check number of matched points between base and beacons
+    check number of matched points between base (beacon set) and beacons (another beacon set)
     """
 
     base_list = base.tolist()
@@ -124,6 +111,10 @@ def realign(beacon1, beacon2):
     return None, 0, None
 
 
+def manhattan(point1, point2):
+    return sum(abs(val1-val2) for val1, val2 in zip(point1, point2))
+
+
 def main():
     np.set_printoptions(suppress=True)
 
@@ -134,20 +125,22 @@ def main():
 
     # beacons[scanner_id] = [[x, y, z], beacon, beacon, ...]
     beacons = parse_input(args.input)
+    scanners = [(0, 0, 0)]
 
-    universe = beacons.pop()
+    universe = beacons.pop(0)
     while beacons:
-        beacon = beacons.pop()
+        beacon = beacons.pop(0)
         for rotation in ROTATIONS:
             tmp = rotate(beacon, rotation)
             displacement, matched, realigned = realign(universe, tmp)
             if displacement is not None:
+                scanners.append(tuple(displacement * np.array([-1, -1, -1])))
                 print(f'realigned b:{beacon} r:{rotation} d:{displacement} m:{matched}')
                 print(f'queue size {len(beacons)}')
                 universe = np.unique(np.append(universe, realigned, axis=0), axis=0)
                 break
         else:
-            beacons.insert(0, beacon)
+            beacons.append(beacon)
 
     print('universe completed')
     print(universe.shape)
@@ -156,6 +149,9 @@ def main():
     print('universe dump')
     with np.printoptions(threshold=np.inf):
         print(universe)
+
+    print('universe size')
+    print(max(manhattan(a, b) for (a, b) in permutations(scanners, 2)))
 
 
 if __name__ == '__main__':
